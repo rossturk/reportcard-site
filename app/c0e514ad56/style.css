@@ -1,0 +1,823 @@
+/* Blinker, self-hosted alongside the body face. One weight (400): the display face earns
+   its keep on a couple of big strings, and anything using it must not ask for bold — the
+   browser would synthesise one rather than load a weight that isn't here. Titles only. */
+@font-face {
+  font-family: 'Blinker';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/blinker-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Blinker';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/blinker-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* LINE Seed JP, self-hosted (latin subsets only — the app's UI is English, and the full
+   JP glyph set runs to megabytes). Overpass Mono stays for numbers and code. */
+@font-face {
+  font-family: 'LINE Seed JP';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/line-seed-jp-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'LINE Seed JP';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/line-seed-jp-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'LINE Seed JP';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/line-seed-jp-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'LINE Seed JP';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/line-seed-jp-latin-ext-700-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'LINE Seed JP';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/line-seed-jp-latin-800-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'LINE Seed JP';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/line-seed-jp-latin-ext-800-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #faf8f3;
+  --card: #ffffff;
+  --sunk: #f3f0e8;
+  --rule: #e4dfd3;
+  --rule-strong: #cdc6b6;
+  --ink: #16150f;
+  --ink-2: #55524a;
+  --ink-3: #86817a;
+  /* Graphite: the grey ramp says how much, tomato says what is live. Interactive states
+     (links, focus, toggles, selection) are ink, never a colour: see theme.js. */
+  --g-0: #ece7dc;
+  --g-1: #d8d2c7;
+  --g-2: #a69f93;
+  --g-3: #625c54;
+  --g-4: #1f1d1b;
+  --g-bar-1: #1f1d1b;
+  --g-bar-2: #3e3a35;
+  --g-bar-3: #625c54;
+  --g-bar-4: #8a847b;
+  --g-bar-5: #a69f93;
+  --g-bar-6: #c4beb3;
+  --g-tail: #e6e0d5;
+  --tomato: #d2552f;
+  --st-ongoing: #d2552f;
+  --st-completed: #2f6f9a;
+  --st-paused: #e3ae3a;
+  --st-abandoned: #b3aba1;
+  --accent: #1d1b19;
+  --accent-soft: var(--g-0);
+  --warn: #8a5a00;
+  --font: "LINE Seed JP", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Blinker", "LINE Seed JP", system-ui, sans-serif;
+  --mono: "Overpass Mono", ui-monospace, Menlo, monospace;
+  --top: 58px;
+  --tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8'%3E%3Cpath d='M1 4l3 3 5-6' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2386817a' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.5 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea { font-family: inherit; color: inherit; }
+button, input, select { font-size: inherit; }
+h1, h2, h3 { margin: 0; }
+code { font-family: var(--mono); font-size: 0.88em; background: var(--sunk); padding: 1px 5px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+.muted { color: var(--ink-3); }
+.sm { font-size: 12.5px; }
+
+/* ---------------------------------------------------------------- chrome */
+
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  height: var(--top);
+  display: flex; align-items: center; gap: 32px;
+  padding: 0 24px;
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+.brand-mark { display: grid; grid-template-columns: 7px 7px; gap: 2px; }
+.brand-mark i { width: 7px; height: 7px; border-radius: 1.5px; background: var(--g-1); }
+.brand-mark i:nth-child(2) { background: var(--g-3); }
+.brand-mark i:nth-child(3) { background: var(--g-4); }
+.brand-mark i:nth-child(4) { background: var(--g-2); }
+
+.steps { display: flex; align-items: center; gap: 8px; }
+.steps a {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 13px 4px 5px; border-radius: 999px;
+  color: var(--ink-3); text-decoration: none; font-weight: 400; font-size: 14px;
+}
+.steps a i {
+  font-style: normal; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 12px; line-height: 1; padding-top: 2px;
+  border: 1.5px solid currentColor;
+}
+.steps a:hover { color: var(--ink); }
+.steps a.on { font-weight: 700; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--rule); }
+.steps a.on i { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.steps a[aria-disabled="true"] { opacity: 0.4; pointer-events: none; }
+.steps .sep { width: 22px; height: 1.5px; background: var(--rule-strong); }
+.spacer { flex: 1; }
+
+.saveflag { font: 12px var(--mono); color: var(--ink-3); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: 1px solid var(--rule-strong); background: var(--card);
+  border-radius: 8px; padding: 8px 14px 6px;
+  font-size: 14px; font-weight: 400; line-height: 1.2;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s;
+}
+.btn:hover { background: var(--sunk); }
+.btn.primary { font-weight: 700; background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.btn.primary:hover { background: #34322b; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--ink-2); }
+.btn.ghost:hover { background: var(--sunk); color: var(--ink); }
+.btn.sm { padding: 5px 10px 3px; font-size: 13px; border-radius: 7px; }
+.btn.lg { padding: 11px 22px 9px; font-size: 15px; border-radius: 9px; }
+.btn:disabled { opacity: 0.35; cursor: default; }
+
+input[type="date"], input[type="search"], input[type="text"], input[type="url"] {
+  border: 1px solid var(--rule); background: var(--paper);
+  border-radius: 8px; padding: 7px 10px 5px; font-size: 14px;
+}
+input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+input[type="checkbox"] { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+
+/* ------------------------------------------------------------------ page */
+
+.page { max-width: 1260px; margin: 0 auto; padding: 36px 24px 150px; }
+.page-head { margin-bottom: 26px; }
+.eyebrow { font: 400 12px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+/* Grows with the window up to the 64px the image export draws its title at, so the page
+   and the PNG read as the same report. The floor is the size this used to be fixed at. */
+h1 { font-family: var(--display); font-size: clamp(38px, 5.2vw, 64px); font-weight: 400; letter-spacing: 0; line-height: 1.12; }
+/* The handle steps back a tone rather than lighting up: it is whose report this is, not
+   the headline of it. */
+h1 .handle { color: var(--ink-2); }
+.lede { margin: 10px 0 0; color: var(--ink-2); font-size: 16px; max-width: 66ch; }
+.center-note { max-width: 580px; margin: 80px auto; text-align: center; }
+.center-note .lede { margin-inline: auto; }
+
+.panel { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; }
+.panel-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.panel-head h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+.panel-head .muted { font-size: 13px; }
+.label { display: block; font-size: 11.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 7px; }
+
+.seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; background: var(--sunk); border-radius: 9px; }
+.seg button {
+  border: 0; background: transparent; cursor: pointer;
+  padding: 6px 12px 4px; border-radius: 7px;
+  font-size: 14px; font-weight: 400; color: var(--ink-2);
+}
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { font-weight: 700; background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(22, 21, 15, 0.08), 0 0 0 1px var(--rule); }
+.seg.sm button { font-size: 13px; padding: 4px 10px 2px; }
+/* Sits inside a card heading: small enough not to compete with the title, pushed to
+   the far end so the three sections that carry one line up down the page. */
+.card-head .seg.xs { margin-left: auto; padding: 2px; border-radius: 7px; }
+.card-head .seg.xs button { font-size: 12px; padding: 3px 9px 2px; border-radius: 5px; }
+.seg .n { font: 600 11px var(--mono); color: var(--ink-3); margin-left: 5px; }
+
+/* ---------------------------------------------------------------- period */
+
+.period-grid { display: flex; flex-wrap: wrap; gap: 20px 36px; align-items: flex-end; }
+.dates { display: flex; gap: 10px; align-items: flex-end; }
+.dates .label { margin-bottom: 7px; }
+.period-summary { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 18px; font-size: 14px; color: var(--ink-2); }
+.period-summary b { color: var(--ink); }
+.pull-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 14px;
+}
+.pull-row > .btn { margin-left: auto; }
+.warn { color: var(--warn); }
+.progress { font: 13px var(--mono); color: var(--ink-2); }
+.spinner {
+  width: 14px; height: 14px; flex-shrink: 0; border-radius: 50%;
+  border: 2px solid var(--rule-strong); border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
+
+/* -------------------------------------------------------------- projects */
+
+.suggest { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+.suggest .label { margin: 0 4px 0 0; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 12px; }
+.toolbar input[type="search"] { width: 240px; max-width: 100%; }
+.sort { display: flex; align-items: center; gap: 8px; margin-left: auto; font-size: 13px; color: var(--ink-3); }
+
+select.plain {
+  appearance: none; border: 1px solid var(--rule); background: var(--card) var(--chevron) no-repeat right 10px center;
+  border-radius: 7px; padding: 5px 28px 3px 10px; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+
+.bulk {
+  position: sticky; top: calc(var(--top) + 10px); z-index: 20;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 10px 14px; margin-bottom: 10px;
+  background: var(--ink); color: var(--paper); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(22, 21, 15, 0.18);
+}
+.bulk .btn { background: transparent; color: var(--paper); border-color: rgba(250, 248, 243, 0.3); }
+.bulk .btn:hover { background: rgba(250, 248, 243, 0.12); }
+.bulk .btn.primary { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.bulk .btn.ghost { border-color: transparent; color: rgba(250, 248, 243, 0.75); }
+.bulk select.plain { background-color: transparent; color: var(--paper); border-color: rgba(250, 248, 243, 0.3); }
+.bulk select.plain option { color: var(--ink); }
+.bulk input[type="text"] { width: 210px; background: rgba(250, 248, 243, 0.1); border-color: rgba(250, 248, 243, 0.3); color: var(--paper); }
+.bulk .muted { color: rgba(250, 248, 243, 0.6); }
+.bulk-sep { width: 1px; align-self: stretch; background: rgba(250, 248, 243, 0.22); }
+
+.table { border-top: 1px solid var(--rule); }
+
+/* One rhythm per row: name and its quiet meta line, then fields of equal height.
+   Anything variable-length (merged repos, description, screenshot) lives in the drawer. */
+.tr {
+  display: grid;
+  grid-template-columns: 26px minmax(160px, 1.15fr) minmax(112px, 0.7fr) minmax(64px, 0.45fr) 64px 42px minmax(180px, 1.05fr) 86px;
+  grid-template-areas: "sel name cat act commits releases res more";
+  gap: 0 14px; align-items: center;
+  padding: 9px 8px; border-bottom: 1px solid var(--rule);
+}
+.tr.th {
+  padding-block: 8px;
+  font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3);
+}
+.tr.th > div { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tr:hover { background: color-mix(in srgb, var(--sunk) 45%, transparent); }
+.tr.sel { background: var(--accent-soft); }
+.tr.grp { box-shadow: inset 3px 0 0 var(--accent); }
+.tr.off > :not(.c-sel):not(.c-more) { opacity: 0.42; }
+.tr.open { background: var(--paper); }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+.c-sel { grid-area: sel; }
+.c-name { grid-area: name; min-width: 0; }
+.c-cat { grid-area: cat; min-width: 0; }
+.c-act { grid-area: act; min-width: 0; }
+.c-commits { grid-area: commits; }
+.c-releases { grid-area: releases; }
+.c-res { grid-area: res; min-width: 0; }
+.c-more { grid-area: more; display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-end; gap: 2px; }
+
+.name-in {
+  width: 100%; margin-left: -8px; padding: 2px 8px 4px !important; line-height: 1.4;
+  font-size: 14.5px !important; font-weight: 700;
+  background: transparent !important; border-color: transparent !important;
+}
+.name-in:hover { border-color: var(--rule) !important; }
+.name-in:focus { background: var(--card) !important; border-color: var(--accent) !important; }
+.meta {
+  display: flex; align-items: center; gap: 5px; margin-top: 1px; padding-left: 1px;
+  font-size: 11px; color: var(--ink-3); white-space: nowrap; overflow: hidden;
+}
+.meta > span { overflow: hidden; text-overflow: ellipsis; }
+.meta .repo { flex: 0 1 auto; min-width: 0; font-family: var(--mono); font-size: 11px; }
+.meta .dot, .meta .is-new { flex: 0 0 auto; }
+.meta .dot { opacity: 0.5; }
+.meta .is-new { color: var(--accent); }
+
+/* Fields stay quiet until you reach for them, so the table isn't a wall of boxes. */
+.cat-in, .why-in {
+  width: 100%; font-size: 12.5px !important; padding: 4px 8px 5px !important; line-height: 1.45;
+  background: transparent !important; border-color: transparent !important; text-overflow: ellipsis;
+}
+.cat-in:hover, .why-in:hover { border-color: var(--rule) !important; background: var(--card) !important; }
+.cat-in:focus, .why-in:focus { background: var(--card) !important; border-color: var(--accent) !important; }
+.cat-in::placeholder, .why-in::placeholder { color: var(--ink-3); opacity: 0.55; }
+.why-in:disabled { background: transparent !important; color: var(--rule-strong); }
+
+.spark-wrap { display: block; width: 100%; }
+.spark { display: block; width: 100%; height: 22px; }
+
+.c-num { text-align: right; font-variant-numeric: tabular-nums; }
+.c-num b { display: block; font-size: 14px; font-weight: 700; }
+.c-num .prev { display: block; font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+.quiet { color: var(--ink-3); font-weight: 400; }
+
+.result { position: relative; }
+.result i { position: absolute; left: 9px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; pointer-events: none; }
+.result select {
+  width: 100%; appearance: none; cursor: pointer;
+  border: 1px solid transparent; background: transparent var(--chevron) no-repeat right 8px center;
+  border-radius: 7px; padding: 4px 24px 5px 23px; font-size: 13px; font-weight: 700; line-height: 1.45;
+}
+.result select:hover { border-color: var(--rule); background-color: var(--card); }
+.result select:focus { border-color: var(--accent); background-color: var(--card); outline: none; }
+.outcome { display: flex; flex-direction: column; gap: 1px; }
+
+/* Row actions live together on the right, all the same size and shape. */
+.icon {
+  width: 24px; height: 24px; flex: 0 0 auto;
+  display: inline-grid; place-items: center; place-content: center;
+  border: 0; border-radius: 6px; background: transparent; cursor: pointer;
+  color: var(--rule-strong); font-size: 13px; line-height: 1; vertical-align: middle;
+}
+.icon:hover { background: var(--sunk); color: var(--ink-2); }
+.star.on { color: #eda100; }
+.c-more .chev { font-size: 11px; color: var(--ink-3); line-height: 24px; }
+.tr:hover .c-more .chev, .tr.open .c-more .chev { color: var(--ink-2); }
+.switch-in::before {
+  content: ""; width: 13px; height: 13px; border-radius: 4px;
+  border: 1.5px solid var(--rule-strong); background: transparent;
+}
+.switch-in.on::before {
+  border-color: var(--accent); background: var(--accent) var(--tick) no-repeat center / 9px;
+}
+.table-empty { padding: 26px 8px; color: var(--ink-3); }
+
+/* Drawer: the variable-length material, out of the row's rhythm. */
+.field-repos { margin-bottom: 14px; }
+.repo-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font: 11.5px var(--mono); color: var(--ink-2);
+  background: var(--sunk); border-radius: 6px; padding: 1px 1px 0 7px;
+}
+.chip b { font-weight: 700; color: var(--ink-3); }
+.chip button {
+  border: 0; background: transparent; cursor: pointer;
+  color: var(--ink-3); font-size: 14px; line-height: 1; padding: 2px 5px; border-radius: 4px;
+}
+.chip button:hover { background: var(--rule); color: var(--ink); }
+.link { border: 0; background: none; cursor: pointer; color: var(--accent); font-size: 12px; padding: 2px 4px; text-decoration: underline; text-underline-offset: 2px; }
+.tag { font-size: 11px; padding: 2px 6px 0; border-radius: 5px; background: var(--sunk); color: var(--ink-2); }
+.tag.new { background: var(--accent-soft); color: var(--ink); }
+.note-in { width: 100%; font-size: 13px !important; padding: 5px 9px 3px !important; }
+
+@media (max-width: 1280px) {
+  .tr {
+    grid-template-columns: 26px minmax(150px, 1fr) minmax(150px, 0.75fr) minmax(70px, 0.4fr) 58px 40px 76px;
+    grid-template-areas:
+      "sel name res act commits releases more"
+      ". cat res act commits releases more";
+    gap: 2px 12px; align-items: center;
+  }
+  .tr.th { display: none; }
+  .c-res, .c-act, .c-commits, .c-releases, .c-more { align-self: center; }
+  .cat-in { max-width: 190px; }
+  .why-in { max-width: 260px; }
+}
+
+@media (max-width: 900px) {
+  .tr {
+    grid-template-columns: 26px minmax(0, 1fr) 58px 40px 76px;
+    grid-template-areas:
+      "sel name commits releases more"
+      ". cat act act act"
+      ". res res res res";
+    align-items: start;
+  }
+  .c-res { max-width: 420px; }
+  .c-act { max-width: 200px; }
+}
+
+.earlier { margin-top: 22px; }
+.earlier summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--ink-2); padding: 6px 0; }
+.earlier p { margin: 4px 0 12px; }
+
+.wizard-foot {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  backdrop-filter: blur(10px); border-top: 1px solid var(--rule);
+}
+.foot-inner { max-width: 1260px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+.foot-stats { display: flex; flex-wrap: wrap; gap: 2px 18px; margin-right: auto; font-size: 14px; color: var(--ink-2); }
+.foot-stats b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------- dashboard */
+
+.dash-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 18px; margin-bottom: 22px; }
+/* The published site's date line, under a title that names whose report it is — the
+   same two lines, in the same order, as the head of the exported image. */
+.site-range { margin: 10px 0 0; font-size: 18px; color: var(--ink-2); }
+.site-range span { font-size: 16px; color: var(--ink-3); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Seven tiles, and seven is prime: every column count below it leaves a remainder.
+   Four divides nothing either, but 7 into 4 leaves a row of three, which reads as a
+   short last row rather than an orphan. Three was the bad step — it stranded the
+   seventh tile alone under two full rows — so the ladder skips it, and at two columns
+   the odd tile is given the whole width instead of half of it. */
+.kpis { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+@media (max-width: 1240px) { .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* 700, not 560: four tiles across a phone-sized page are narrower than their own
+   labels, and "LINES CHANGED" breaking over two lines makes every tile in the row a
+   different height. Two-up keeps the label on one line. */
+@media (max-width: 700px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpis > :last-child { grid-column: 1 / -1; }
+}
+.kpi { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 13px 14px 11px; }
+.kpi-label { display: block; font-size: 11.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.kpi-value { display: block; margin-top: 6px; font-size: 24px; font-weight: 400; letter-spacing: -0.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi-value small { margin-left: 5px; font-size: 14px; font-weight: 400; letter-spacing: 0; color: var(--ink-3); }
+.kpi-delta { display: block; margin-top: 4px; font-size: 13px; font-weight: 400; color: var(--ink-2); }
+.kpi-delta span { font-weight: 400; color: var(--ink-3); }
+
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 20px 22px 18px; margin-bottom: 16px; }
+.card-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 16px; }
+.card-head h2 { font-size: 18px; font-weight: 400; letter-spacing: -0.01em; }
+.card-head .muted { font-size: 13px; }
+/* A chart key belongs beside its chart, not crowding the title. */
+.card-head .head-legend { margin-left: auto; font-size: 13px; color: var(--ink-3); white-space: nowrap; }
+.card-foot { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-3); }
+/* A chart wider than its card scrolls inside one of these. The fade is the only thing
+   that says so: without it the content stops at a hard edge, which reads as the end of
+   the chart. Each side is faded only while there is something that way — wireScrollers()
+   in dashboard.js sets the classes — so the hint is never a lie, and a chart that fits
+   its card has no fade at all. */
+.scroll-x { overflow-x: auto; }
+.scroll-x.more-right {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+}
+.scroll-x.more-left {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px);
+  mask-image: linear-gradient(to right, transparent, #000 40px);
+}
+.scroll-x.more-left.more-right {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; color: var(--ink-3); }
+.legend i { display: block; width: 11px; height: 11px; border-radius: 2.5px; }
+/* The sankey's "No result yet": outlined and hatched, like its nodes and ribbons. */
+.legend i.hatch { box-sizing: border-box; border: 1px solid #8c857b; background: repeating-linear-gradient(45deg, #8c857b 0 1px, #fff 1px 3px); }
+.legend .gap { width: 14px; }
+/* Each swatch sits with the range it stands for, so the ramp is an index not a gradient. */
+.legend .lg { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
+.legend .lg + .lg { margin-left: 4px; }
+.legend .lg-note { color: var(--ink-3); }
+/* The scale and its caption are one item, so the caption can never be orphaned onto a
+   line by itself; the glyph key — the gantt's, which used to sit in the card's top
+   right where a reader took it for navigation — is the item that wraps. */
+.legend .lg-ramp { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.legend .lg-note { margin-left: 4px; }
+.legend .lg-marks { margin-left: 18px; }
+.legend .lg-note, .legend .lg-marks { white-space: nowrap; }
+
+/* The default face for chart text. `:not([font-family])` matters: this rule is copied
+   into the exported SVG, where a CSS declaration beats a presentation attribute — without
+   the guard it silently overrides any element that asks for a different family. */
+svg text:not([font-family]) { font-family: var(--font); }
+.gantt, .sankey, .compare { display: block; width: 100%; height: auto; min-width: 760px; }
+.g-name { font-size: 12.5px; fill: var(--ink); }
+.g-axis, .c-axis { font-size: 11px; fill: var(--ink-3); }
+/* Only the compare axis is numeric; .g-axis carries month names. */
+.c-axis { font-variant-numeric: tabular-nums; }
+.g-result { font-size: 12px; fill: var(--ink-2); }
+.g-count { font-size: 12px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+.g-hit { fill: transparent; }
+.g-row:hover .g-hit { fill: rgba(31, 29, 27, 0.04); }
+
+/* The sankey keeps its own neutrals (Graphite): label and value inks, and a white halo
+   so labels read over the ribbons. Focus dims the rest to a quarter of their strength. */
+.s-link { fill-opacity: 0.42; transition: opacity 0.12s, fill-opacity 0.12s; }
+/* No result yet: the hatch is already mostly white, so it takes more of its strength. */
+.s-link.hatch { fill-opacity: 0.85; }
+.sankey.focus .s-link { opacity: 0.25; }
+.sankey.focus .s-link.on { opacity: 1; fill-opacity: 1; }
+.s-label { font-size: 12px; fill: #1d1b19; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.s-label.result { font-size: 13px; font-weight: 700; }
+.s-value { font-weight: 400; fill: #8c857b; }
+
+.c-end-label { font-size: 12px; fill: var(--ink-2); }
+.c-end-value { font-size: 14px; font-weight: 700; fill: var(--ink); font-variant-numeric: tabular-nums; }
+
+.cmp-table { width: 100%; margin-top: 18px; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.cmp-table th, .cmp-table td { padding: 9px 12px 7px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+.cmp-table thead th { font-size: 13px; font-weight: 700; color: var(--ink); vertical-align: bottom; }
+.cmp-table thead th small { display: block; font-size: 11.5px; font-weight: 400; color: var(--ink-3); }
+.cmp-table tbody th { text-align: left; font-weight: 700; color: var(--ink-2); }
+.cmp-table th:first-child { text-align: left; }
+.cmp-table .chg { color: var(--ink-2); font-weight: 700; }
+.sw { display: inline-block; width: 16px; margin-right: 7px; vertical-align: middle; border-top: 2.5px solid var(--c); }
+.sw.dash { border-top-style: dashed; }
+
+/* ------------------------------------------------------- portrait charts */
+/* Two charts are wider than a phone by their nature: a year of weeks, and a year of
+   projects against a year of weeks. Under the widths below they are redrawn rather
+   than squeezed — see drawGantt() and drawHeatmap(). */
+
+/* The month scale stays put while the rows pass under it. It is pinned below the app
+   bar in the workspace and to the top of the window on the published site, which has
+   no bar to clear. */
+.gantt-axis-wrap {
+  position: sticky; top: var(--top); z-index: 5;
+  background: var(--card); padding-top: 2px;
+  box-shadow: 0 1px 0 var(--rule);
+}
+body.published .gantt-axis-wrap { top: 0; }
+.gantt-axis, .gantt-rows { display: block; width: 100%; height: auto; }
+/* Air under the pinned scale. It belongs to the rows rather than to the strip, so that
+   rows passing beneath while you scroll are covered by the strip's own background
+   right up to its rule. */
+.gantt-rows { margin-top: 10px; }
+/* The month rules run the whole height, so a name laid over them gets crossed out. The
+   halo knocks the rule out behind the text — the same trick the sankey's labels use,
+   and the reason the rules can stay full-height instead of being chopped per row. */
+.gantt-rows .g-name {
+  font-size: 11.5px;
+  paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round;
+}
+/* A hovered row tints behind that halo, which would show as a white patch around the
+   name. There is no hover on the screens this layout is for. */
+.gantt-rows .g-row:hover .g-hit { fill: transparent; }
+
+/* The calendar cut into months: two to a row, and the gutter between the pair is the
+   one piece of air that has to hold — a month block read as a unit only if its own
+   cells are closer together than the two blocks are. */
+/* Centred, not spread: the cell size is rounded to a whole pixel, so a few pixels are
+   always left over, and space-between banks all of them in the gutter — which is the
+   one gap that must stay smaller than the card's own padding, or the two columns stop
+   reading as one calendar. Centring splits the remainder to the outside instead. */
+.months { display: grid; grid-template-columns: repeat(2, max-content); gap: 22px 20px; justify-content: center; align-items: start; }
+.month { margin: 0; }
+.month figcaption { margin-bottom: 6px; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.month svg { display: block; }
+#heat.stacked { overflow: visible; padding-top: 2px; }
+
+/* --------------------------------------------------------------- prose */
+/* The report's own sentences: a lede under the date range, a line under each section
+   heading. Set in the second ink, a little narrower than the page — this is the author
+   talking, and it should not read as another label on a chart.
+
+   Everything below .prose itself is the editing view, which only the owner ever sees:
+   a published report has no prompts, no drafts and no empty boxes, so an intro nobody
+   wrote takes up no space at all. */
+.prose { margin: 0 0 16px; max-width: 72ch; color: var(--ink-2); font-size: 14.5px; line-height: 1.52; }
+.prose p { margin: 0; }
+.prose p + p { margin-top: 9px; }
+.prose-lede { margin: 0 0 20px; max-width: 62ch; font-size: 17px; line-height: 1.5; }
+
+/* Clicking the text is how you edit it, so it needs a hover that says so. The highlight
+   is a spread shadow rather than padding and a negative margin to cancel it: that
+   margin collapsed through .prose and lifted the whole block 5px, so the owner's page
+   and the published one disagreed about where prose sits. A shadow costs no layout. */
+.prose-body { border-radius: 3px; cursor: text; }
+.prose-body:hover { background: var(--sunk); box-shadow: 0 0 0 7px var(--sunk); }
+.prose-prompt {
+  border: 0; background: none; cursor: text; padding: 0;
+  font: inherit; color: var(--ink-3);
+  border-bottom: 1px dashed var(--rule-strong);
+}
+.prose-prompt:hover { color: var(--ink-2); border-bottom-color: var(--ink-3); }
+/* The draft the slot opens with. A quote, because it is a suggestion and not yet
+   anyone's sentence. */
+.prose-draft { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: 7px; font-size: 13.5px; }
+.prose-draft q { color: var(--ink-3); font-style: italic; }
+.prose-in {
+  display: block; width: 100%; max-width: 72ch; resize: none; overflow: hidden;
+  border: 1px solid var(--rule); border-radius: 8px; padding: 7px 9px;
+  background: var(--card); color: var(--ink-2);
+  font: inherit; font-size: inherit; line-height: inherit;
+}
+.prose-lede .prose-in { max-width: 62ch; }
+.prose-in:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+/* Only worth a number near the cap: a counter over an empty box is an instruction to
+   write to length. The cap is soft — past it the count goes amber and nothing else
+   happens. */
+.prose-count { display: block; margin-top: 4px; font: 11.5px var(--mono); color: var(--ink-3); }
+.prose-count.over { color: var(--warn); }
+
+/* --------------------------------------------------------------- overlays */
+
+.tip {
+  position: fixed; z-index: 100; pointer-events: none; opacity: 0;
+  transform: translate(-50%, calc(-100% - 10px));
+  max-width: 380px; padding: 7px 10px 5px; border-radius: 7px;
+  background: var(--ink); color: var(--paper); font-size: 12.5px; line-height: 1.45;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); transition: opacity 0.08s;
+}
+.tip.on { opacity: 1; }
+.tip .line { display: flex; align-items: center; gap: 8px; }
+.tip .line i { width: 12px; border-top: 2.5px solid var(--c); }
+.tip .line b { margin-left: auto; padding-left: 14px; font-variant-numeric: tabular-nums; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 84px; z-index: 110;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  padding: 9px 16px 7px; border-radius: 8px; background: var(--ink); color: var(--paper); font-size: 14px;
+  transition: opacity 0.18s, transform 0.18s;
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+/* An undo offered in the moment, for edits that destroy something without asking. */
+.toast-undo {
+  margin-left: 12px; padding: 3px 10px 2px; border: 1px solid currentColor;
+  border-radius: 6px; background: transparent; color: inherit; font: inherit;
+  font-weight: 700; cursor: pointer;
+  /* .toast is pointer-events:none so it never blocks the page; the button opts back in,
+     or it cannot be clicked at all. */
+  pointer-events: auto;
+}
+.toast-undo:hover { background: rgba(255, 255, 255, 0.16); }
+
+.modal { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 24px; background: rgba(22, 21, 15, 0.5); }
+.modal-card { display: flex; flex-direction: column; width: min(780px, 100%); max-height: calc(100vh - 48px); overflow: hidden; background: var(--card); border-radius: 14px; }
+.modal-head, .modal-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; padding: 14px 18px; }
+.modal-head { border-bottom: 1px solid var(--rule); }
+.modal-head h3 { margin-right: auto; font-size: 17px; font-weight: 700; }
+.modal-body { overflow: auto; padding: 18px; background: var(--sunk); }
+.modal-body canvas { display: block; width: 100%; height: auto; box-shadow: 0 2px 14px rgba(0, 0, 0, 0.1); }
+.modal-foot { border-top: 1px solid var(--rule); }
+.modal-foot .muted { margin-right: auto; font-size: 13px; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); cursor: pointer; }
+
+/* ---------------------------------------------------------- working hours */
+
+/* Centred, which does nothing while the dial and the grid sit side by side — the grid
+   grows to take the slack, so there is none to distribute. Once the row wraps, the dial
+   is alone on a line with room to spare, and left-aligned it reads as a mistake. */
+.clock-grid { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 32px; }
+.dial-wrap { flex: 0 0 280px; max-width: 100%; }
+.dial { display: block; width: 100%; height: auto; overflow: visible; }
+/* Names the two arcs; the numbers live in the facts row, so they aren't repeated here. */
+.dial-cap { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 16px; margin: 8px 0 0; font-size: 12.5px; color: var(--ink-3); }
+.dial-cap span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.dial-cap i { display: block; width: 15px; }
+.dial-cap i.thin { border-top: 1.5px solid var(--g-2); }
+.dial-cap i.thick { border-top: 3.5px solid var(--tomato); }
+.dial-cap b { color: var(--ink); font-weight: 700; }
+.matrix-wrap { flex: 1 1 460px; min-width: 0; overflow-x: auto; }
+.matrix { display: block; width: 100%; height: auto; min-width: 440px; }
+/* Turned on its side there is nothing to scroll: seven columns always fit, and the
+   grid is centred because its cells are capped and no longer fill the card. */
+.matrix.portrait { min-width: 0; width: auto; height: auto; max-width: 100%; margin: 0 auto; }
+.k-hour { font-size: 10.5px; fill: var(--ink-3); }
+.k-day { font-size: 11.5px; font-weight: 700; fill: var(--ink-2); }
+.k-day.weekend { font-weight: 400; fill: var(--ink-3); }
+.k-total { font-size: 11px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+.k-dot { fill: var(--g-3); }
+.k-dot.peak { fill: var(--tomato); }
+.matrix rect[data-tip]:hover { stroke: var(--ink); stroke-width: 1.5; }
+
+/* One row of equal cells, however many facts there are — the same row the exported
+   image draws. Not auto-fit: this grid paints its dividers by letting its own
+   background through the gaps, so a column with no cell in it is a block of rule
+   colour, and auto-fit produced exactly that at any width where the cells divided
+   into more columns than there were facts. */
+.facts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 1px; margin-top: 18px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.fact { background: var(--card); padding: 11px 14px 10px; }
+.fact span { display: block; font-size: 11px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.fact b { display: block; margin-top: 3px; font-size: 19px; font-weight: 400; letter-spacing: -0.02em; }
+.fact small { display: block; font-size: 11.5px; color: var(--ink-3); }
+
+.modal-sections { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 12px 18px; border-bottom: 1px solid var(--rule); background: var(--paper); }
+.modal-sections .label { margin: 0; }
+.modal-sections .check { font-size: 13px; }
+.modal-foot .over { color: #b4302f; }
+
+/* ------------------------------------------------- curation drawer (step 1) */
+
+.drawer { grid-column: 1 / -1; margin: 10px 0 2px; padding: 14px 16px; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; }
+.field-desc { flex: 1 1 100%; }
+.field-desc .label { display: flex; align-items: baseline; gap: 8px; }
+.field-desc textarea {
+  width: 100%; max-width: 78ch; min-height: 50px; resize: vertical;
+  border: 1px solid var(--rule); background: var(--paper);
+  border-radius: 8px; padding: 8px 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2);
+}
+.field-desc textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.src-note { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-3); }
+.drawer-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 18px; }
+.field-sm { display: block; }
+.field-sm .label { margin-bottom: 5px; }
+.field-sm input { width: 230px; }
+.drawer-star { padding-bottom: 6px; }
+
+/* --------------------------------------------------- highlights (dashboard) */
+
+.highlights-host { width: 100%; }
+.highlights-host svg { display: block; width: 100%; height: auto; }
+.highlights-host .hl-link:hover text { text-decoration: underline; }
+
+/* ------------------------------------------------------- type breakdowns */
+/* Two ranked bar charts. Side by side while there is room for a name column and a
+   track in each half, one under the other once there isn't — which on a phone is the
+   only arrangement that leaves a bar long enough to read. */
+.breakdowns { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+/* Stacked, the gap is between rows and the old 24px is plenty. */
+@media (max-width: 860px) { .breakdowns { grid-template-columns: 1fr; gap: 24px; } }
+.breakdown { margin: 0; min-width: 0; }
+/* Just the chart's name now. The total that used to sit at the right edge of this line
+   said what the chart already says, and two of them made the card read as a table of
+   numbers before it read as two charts. */
+.breakdown figcaption {
+  margin-bottom: 8px;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3);
+}
+
+/* The charts are SVG, drawn by layoutBars/barsSVG so the page and the exported image
+   measure the same labels. Only the host box needs styling here. */
+.bars-host { width: 100%; }
+.bars-host svg { display: block; width: 100%; height: auto; }
+.bars-host .bars-g g:hover { filter: brightness(0.94); }
+
+.tag.more { background: transparent; border: 1px dashed var(--rule-strong); color: var(--ink-3); }
+
+/* ------------------------------------------------------ screenshot upload */
+
+.field-shot { flex: 1 1 100%; }
+.field-shot .label { display: flex; align-items: baseline; gap: 8px; }
+.shot-drop {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 9px 14px; border: 1px dashed var(--rule-strong); border-radius: 8px;
+  font-size: 13px; color: var(--ink-3); background: var(--paper);
+}
+.shot-drop:hover { border-color: var(--accent); color: var(--ink-2); }
+.shot-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.shot-thumb { display: block; max-width: 280px; max-height: 150px; border-radius: 8px; border: 1px solid var(--rule); }
+
+/* ------------------------------------------------------------ small screens
+   A published report is read on a phone as often as not, and nothing below
+   rearranges a chart: each one already either fits its host (heatmap, bars,
+   highlights) or scrolls inside its own card (timeline, sankey, weekday grid).
+   What changes here is the page's furniture — narrower gutters, smaller headings,
+   and nothing left that can make the page wider than the screen. */
+/* Below this the five cells stop fitting one row: three, then two, and the last one
+   takes whatever is left of its row so no gap is painted. */
+@media (max-width: 900px) {
+  .facts { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fact:last-child { grid-column: span 2; }
+  .fact b { font-size: 17px; }
+}
+
+@media (max-width: 560px) {
+  .page { padding: 24px 14px 100px; }
+  .card { padding: 16px 14px 14px; border-radius: 12px; }
+  h1 { font-size: 30px; }
+  .site-range { font-size: 16px; }
+  .site-range span { font-size: 14px; }
+  /* The wordmark and the step nav cannot both fit; the nav is the one you use. */
+  .topbar { gap: 14px; padding: 0 14px; }
+  .brand { display: none; }
+  /* A legend pinned right and forbidden to wrap sets the card's width by itself. */
+  .card-head .head-legend { margin-left: 0; white-space: normal; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact:last-child { grid-column: 1 / -1; }
+  /* Half a phone wide is the narrowest a cell gets, and the longest value in it is a
+     time range; a step down is what keeps that range on one line. */
+  .fact b { font-size: 16px; }
+  /* These three scale down to their min-width before they scroll, which on a phone
+     put 12.5px row names at 8px. Raising the floor costs a wider swipe and buys back
+     text you can actually read; nothing here is below ~80% of design size. */
+  .gantt, .sankey, .compare { min-width: 900px; }
+  .matrix { min-width: 700px; }
+  .prose-lede { font-size: 16px; }
+  /* Two lines, deliberately: the scale with its caption, then the glyph key. */
+  .legend .lg-marks { flex-basis: 100%; margin-left: 0; }
+}

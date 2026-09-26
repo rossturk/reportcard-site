@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- One title, in both places. The tab used to say the date range while the unfurl said
+     the name, which is two names for one page; the range is in the description, which is
+     where a reader looking for it will be. `reportcard export` fills these in. -->
+<title>Report Card — Ross Turk</title>
+<meta name="description" content="I stopped working full-time as a technology executive in October. I plan to return, but after 30 years I needed a break…">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Report Card">
+<meta property="og:title" content="Report Card — Ross Turk">
+<meta property="og:description" content="I stopped working full-time as a technology executive in October. I plan to return, but after 30 years I needed a break…">
+<!-- The share card: written by `reportcard export` when the workspace has a share
+     image, and absent entirely when it does not, because an og:image pointing at
+     nothing unfurls worse than no og:image at all. -->
+<meta property="og:url" content="https://reportcard.rtrk.us/">
+<meta property="og:image" content="https://reportcard.rtrk.us/share.png?v=d8124e32c0">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ross Turk's totals and daily activity">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://reportcard.rtrk.us/share.png?v=d8124e32c0">
+<!-- The brand mark itself, inline: four squares, no request, and it scales. A tab with
+     no favicon is a tab you cannot find again. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%23faf8f3'/%3E%3Crect x='3' y='3' width='4.6' height='4.6' rx='1.2' fill='%23d8d2c7'/%3E%3Crect x='8.4' y='3' width='4.6' height='4.6' rx='1.2' fill='%23625c54'/%3E%3Crect x='3' y='8.4' width='4.6' height='4.6' rx='1.2' fill='%231f1d1b'/%3E%3Crect x='8.4' y='8.4' width='4.6' height='4.6' rx='1.2' fill='%23a69f93'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app/c0e514ad56/style.css">
+</head>
+<body>
+
+<!-- No chrome at all: this is the reader's page about its author, and an app bar at
+     the top of it would be a second brand nobody asked to see. The report names itself
+     in its own heading. -->
+<main id="app"></main>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<!-- The report's data, written by `reportcard export`. A plain script rather than a
+     fetch: every static host serves it correctly, with no JSON content type to get
+     wrong and nothing to configure. -->
+<script src="data.js?v=947493a9cc"></script>
+<script type="module" src="app/c0e514ad56/app.js"></script>
+</body>
+</html>
